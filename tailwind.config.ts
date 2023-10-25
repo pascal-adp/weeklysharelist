@@ -8,6 +8,9 @@ export default {
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
       },
+      colors: {
+        "ws-claret": "#750D37"
+      }
     },
   },
   plugins: [],
