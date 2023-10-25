@@ -9,7 +9,8 @@ export default {
         sans: ["var(--font-sans)", ...fontFamily.sans],
       },
       colors: {
-        "ws-claret": "#750D37"
+        "ws-claret": "#750D37",
+        "ws-darkcyan": "#3E8989"
       }
     },
   },
