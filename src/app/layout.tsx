@@ -1,10 +1,11 @@
-import "~/styles/globals.css";
+import "~/app/styles/globals.css";
 
 import { Inter } from "next/font/google";
 import { headers } from "next/headers";
 
 import { TRPCReactProvider } from "~/trpc/react";
 import Navbar from "~/app/components/Navbar";
+import AuthProvider from "~/app/context/AuthProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -24,9 +25,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`font-sans ${inter.variable} h-screen flex flex-col`}>
-        <Navbar />
-        <TRPCReactProvider headers={headers()}>{children}</TRPCReactProvider>
+      <body className={`font-sans ${inter.variable} flex h-screen flex-col`}>
+        <TRPCReactProvider headers={headers()}>
+          <AuthProvider>
+            <Navbar />
+            {children}
+          </AuthProvider>
+        </TRPCReactProvider>
       </body>
     </html>
   );
