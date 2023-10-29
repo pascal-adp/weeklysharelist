@@ -4,6 +4,7 @@ import {
   type DefaultSession,
   type NextAuthOptions,
 } from "next-auth";
+import { type DefaultJWT } from "next-auth/jwt";
 import SpotifyProvider from "next-auth/providers/spotify";
 
 import { env } from "~/env.mjs";
@@ -17,18 +18,31 @@ import { db } from "~/server/db";
  */
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: {
-      id: string;
-      // ...other properties
-      // role: UserRole;
-    } & DefaultSession["user"];
+    // user: {
+    //   id: string;
+    //   // ...other properties
+    //   // role: UserRole;
+    // } & DefaultSession["user"];
+    accessToken: string | undefined
   }
-
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
 }
+declare module "next-auth/jwt" {
+  interface JWT extends Record<string, unknown>, DefaultJWT {
+    accessToken: string | undefined
+    refreshToken: string | undefined
+    expires_at: number | undefined
+  }
+}
+
+const scopes = [
+  "user-top-read",
+].join(",")
+
+const params = {
+  scope: scopes
+}
+
+const LOGIN_URL = "https://accounts.spotify.com/authorize?" + new URLSearchParams(params).toString()
 
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
@@ -37,30 +51,33 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
+    jwt({ account, token }) {
+      if (account) {
+        token.accessToken = account.access_token
+        token.refreshToken = account.refresh_token
+        token.expires_at = account.expires_at
+      }
+
+      return token
+    },
+    session({ session, token }) {
+      if (token) {
+        session.accessToken = token.accessToken
+      }
+      return session
+    }
   },
-  adapter: PrismaAdapter(db),
+  // adapter: PrismaAdapter(db),
   providers: [
     SpotifyProvider({
       clientId: env.SPOTIFY_CLIENT_ID,
       clientSecret: env.SPOTIFY_CLIENT_SECRET,
+      authorization: LOGIN_URL,
     }),
-    /**
-     * ...add more providers here.
-     *
-     * Most other providers require a bit more work than the Discord provider. For example, the
-     * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-     * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-     *
-     * @see https://next-auth.js.org/providers/github
-     */
   ],
+  session: {
+    strategy: "jwt",
+  }
 };
 
 /**
