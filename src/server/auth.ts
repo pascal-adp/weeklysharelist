@@ -1,10 +1,12 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import axios from "axios";
 import {
   getServerSession,
   type DefaultSession,
   type NextAuthOptions,
+  type TokenSet,
 } from "next-auth";
-import { type DefaultJWT } from "next-auth/jwt";
+import { type JWT, type DefaultJWT } from "next-auth/jwt";
 import SpotifyProvider from "next-auth/providers/spotify";
 
 import { env } from "~/env.mjs";
@@ -34,15 +36,50 @@ declare module "next-auth/jwt" {
   }
 }
 
-const scopes = [
-  "user-top-read",
-].join(",")
+/**
+ * Defining Spotify API specific information.
+ *
+ * @see https://developer.spotify.com/documentation/web-api/tutorials/code-flow
+ * @see https://developer.spotify.com/documentation/web-api/tutorials/refreshing-tokens
+ */
+const LOGIN_URL = "https://accounts.spotify.com/authorize?" + new URLSearchParams({
+  scope: ["user-top-read"].join(","),
+}).toString()
 
-const params = {
-  scope: scopes
+//Extending the TokenSet since it doesn't have a property expires_in
+interface SpotifyRefreshTokenResponse extends TokenSet {
+  expires_in: number
 }
 
-const LOGIN_URL = "https://accounts.spotify.com/authorize?" + new URLSearchParams(params).toString()
+const refreshAccessToken = async (token: TokenSet) => {
+  try {
+    const response = await axios.post<SpotifyRefreshTokenResponse>("https://accounts.spotify.com/api/token", {
+      grant_type: "refresh_token",
+      refresh_token: token.refreshToken,
+    }, {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: 'Basic ' + (Buffer.from(env.SPOTIFY_CLIENT_ID + ':' + env.SPOTIFY_CLIENT_SECRET).toString('base64')),
+      }
+    })
+
+    const tokens: SpotifyRefreshTokenResponse = response.data
+    
+    return {
+      ...token,
+      accessToken: tokens.access_token,
+      //Tokens.expires_in is equal to 3600 seconds (1 hour)
+      //We need to convert it to milliseconds, such that it can be used in our Date.now() comparison
+      expires_at: Date.now() + tokens.expires_in * 1000,
+      //If a refresh request has been made before the token has expired, the refresh token will not be returned from the API
+      //In this case, we will use the old refresh token
+      refreshToken: tokens.refresh_token ?? token.refreshToken,
+    }
+  }
+  catch (error) {
+    console.error(error)
+  }
+}
 
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
@@ -51,14 +88,24 @@ const LOGIN_URL = "https://accounts.spotify.com/authorize?" + new URLSearchParam
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    jwt({ account, token }) {
+    async jwt({ account, token }) {
+      //Only true for the initial login otherwise account is undefined
       if (account) {
         token.accessToken = account.access_token
         token.refreshToken = account.refresh_token
         token.expires_at = account.expires_at
-      }
 
-      return token
+        return token
+      }
+      //Token has not expired yet
+      else if (token.expires_at && Date.now() < token.expires_at) {
+        return token
+      }
+      //Token has expired
+      else {
+        const newAccessToken = await refreshAccessToken(token)
+        return newAccessToken as JWT & TokenSet
+      }
     },
     session({ session, token }) {
       if (token) {
