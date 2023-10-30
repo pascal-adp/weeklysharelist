@@ -38,6 +38,7 @@ export default function Home() {
         Sign Up
       </Button>
       { session ? <div>eingeloog</div> : <div>niet ingeloog</div>}
+      <Button onClick={() => console.log(session.update())}>refresh</Button>
     </main>
   );
 }
