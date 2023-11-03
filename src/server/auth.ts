@@ -5,12 +5,16 @@ import {
   type DefaultSession,
   type NextAuthOptions,
   type TokenSet,
+  type Account
 } from "next-auth";
 import { type JWT, type DefaultJWT } from "next-auth/jwt";
 import SpotifyProvider from "next-auth/providers/spotify";
 
 import { env } from "~/env.mjs";
 import { db } from "~/server/db";
+
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient()
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -24,7 +28,7 @@ declare module "next-auth" {
     //   id: string;
     //   // ...other properties
     //   // role: UserRole;
-    // } & DefaultSession["user"];
+    // } & DefaultSession["user"];  
     accessToken: string | undefined
   }
 }
@@ -81,6 +85,15 @@ const refreshAccessToken = async (token: TokenSet) => {
   }
 }
 
+const newDatabaseUser = async (account: Account, token: JWT) => {
+  account.providerAccountId
+  prisma.user.create({
+    data: {
+      name: token.name,
+    }
+  })
+}
+
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
  *
@@ -94,6 +107,8 @@ export const authOptions: NextAuthOptions = {
         token.accessToken = account.access_token
         token.refreshToken = account.refresh_token
         token.expires_at = account.expires_at
+
+        await newDatabaseUser(account, token)
 
         return token
       }
