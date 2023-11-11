@@ -2,6 +2,8 @@
 import { Button } from "~/app/components/ui/button";
 import { signIn, useSession } from "next-auth/react";
 import { useEffect } from "react";
+import CreateSharelist from "~/app/components/CreateSharelist";
+import SongPreview from "./components/SongPreview";
 
 export default function Home() {
   const session = useSession()
@@ -37,8 +39,7 @@ export default function Home() {
       >
         Sign Up
       </Button>
-      { session ? <div>eingeloog</div> : <div>niet ingeloog</div>}
-      <Button onClick={() => console.log(session.update())}>refresh</Button>
+      <CreateSharelist />
     </main>
   );
 }
