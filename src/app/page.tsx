@@ -9,6 +9,7 @@ export default function Home() {
   const session = useSession()
 
   useEffect(() => {
+    console.log("HALLO:")
     console.log(session)
   }, [session])
 

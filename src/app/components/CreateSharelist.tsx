@@ -11,32 +11,10 @@ import { Input } from "~/app/components/ui/input";
 import { Separator } from "~/app/components/ui/separator";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import axios from "axios";
 import SongPreview from "./SongPreview";
 import { ScrollArea } from "./ui/scroll-area";
 
-const getRecommendations = async (accessToken: string) => {
-  const URL =
-    "https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=10&offset=0";
-  try {
-    const response = await axios.get<SpotifyApi.UsersTopTracksResponse>(URL, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-    return response;
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-const getConcattedArtists = (artists: SpotifyApi.ArtistObjectSimplified[]) => {
-  const artistsNames: string[] = [];
-  artists.forEach((artist) => {
-    artistsNames.push(artist.name);
-  });
-  return artistsNames.join(", ");
-};
+import { getConcattedArtists, getRecommendations, addSongToSharelist } from "~/app/lib/sharelistUtils";
 
 const CreateSharelist = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -47,12 +25,13 @@ const CreateSharelist = () => {
     const fetchData = async () => {
       if (data?.accessToken && songs.length === 0) {
         const response = await getRecommendations(data.accessToken);
+        console.log(response)
         if (response) {
           setSongs(response.data.items);
         }
       }
     };
-    console.log(songs)
+    
     void fetchData();
   }, [dialogOpen, data, songs]);
 
@@ -70,6 +49,9 @@ const CreateSharelist = () => {
         </DialogHeader>
         <Input placeholder="Search" type="search" icon={<Search size={18} />} />
         <Separator className="my-2 bg-gray-200" />
+        <p className="text-md">Current Sharelist:</p>
+
+        <Separator className="my-2 bg-gray-200" />
         <p className="text-md">Recommendations:</p>
         <ScrollArea className="w-[462px] h-48 rounded-md border">
         {songs.map((song) => {
@@ -81,6 +63,7 @@ const CreateSharelist = () => {
               title={song.name}
               artists={artistsNames}
               image={image}
+              onAddToSharelist={() => addSongToSharelist(song.id, song.name, song.album, song.artists, image)}
             />
           );
         })}

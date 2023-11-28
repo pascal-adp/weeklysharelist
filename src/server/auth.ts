@@ -14,7 +14,7 @@ import { env } from "~/env.mjs";
 import { db } from "~/server/db";
 
 import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient()
+import { createSharelist } from "~/app/lib/sharelistUtils";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -24,16 +24,17 @@ const prisma = new PrismaClient()
  */
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    // user: {
-    //   id: string;
-    //   // ...other properties
-    //   // role: UserRole;
-    // } & DefaultSession["user"];  
+    user: {
+      id: string;
+      // ...other properties
+      // role: UserRole;
+    } & DefaultSession["user"];  
     accessToken: string | undefined
   }
 }
 declare module "next-auth/jwt" {
   interface JWT extends Record<string, unknown>, DefaultJWT {
+    userId: string
     accessToken: string | undefined
     refreshToken: string | undefined
     expires_at: number | undefined
@@ -85,15 +86,6 @@ const refreshAccessToken = async (token: TokenSet) => {
   }
 }
 
-const newDatabaseUser = async (account: Account, token: JWT) => {
-  account.providerAccountId
-  prisma.user.create({
-    data: {
-      name: token.name,
-    }
-  })
-}
-
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
  *
@@ -108,7 +100,18 @@ export const authOptions: NextAuthOptions = {
         token.refreshToken = account.refresh_token
         token.expires_at = account.expires_at
 
-        await newDatabaseUser(account, token)
+        const dbUser = await db.account.findFirst({
+          where: {
+            providerAccountId: account.providerAccountId
+          }
+        })
+
+        if (dbUser) {
+          token.userId = dbUser.id
+          await createSharelist(dbUser.id)
+        }
+
+        // await createSharelist(user.id)
 
         return token
       }
@@ -125,11 +128,12 @@ export const authOptions: NextAuthOptions = {
     session({ session, token }) {
       if (token) {
         session.accessToken = token.accessToken
+        session.user.id = token.userId
       }
       return session
     }
   },
-  // adapter: PrismaAdapter(db),
+  adapter: PrismaAdapter(db),
   providers: [
     SpotifyProvider({
       clientId: env.SPOTIFY_CLIENT_ID,
