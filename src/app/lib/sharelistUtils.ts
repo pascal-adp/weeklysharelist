@@ -30,9 +30,9 @@ interface addSongToSharelistProps {
   id: string;
   name: string;
   album: string;
-  artists: string[];
-  image: string;
-  sharelist: string;
+  artists: string;
+  image: string | undefined;
+  sharelist: string | undefined;
 }
 
 export const addSongToSharelist = async ({id, name, album, artists, image, sharelist}: addSongToSharelistProps) => {
