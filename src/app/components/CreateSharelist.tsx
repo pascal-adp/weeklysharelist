@@ -63,7 +63,13 @@ const CreateSharelist = () => {
               title={song.name}
               artists={artistsNames}
               image={image}
-              onAddToSharelist={() => addSongToSharelist(song.id, song.name, song.album, song.artists, image)}
+              onAddToSharelist={() => addSongToSharelist({id: song.id, 
+                name: song.name,
+                album: song.album.name,
+                artists: artistsNames,
+                image: image,
+                sharelist: data?.user?.sharelist?.id
+              })}
             />
           );
         })}
