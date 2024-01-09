@@ -13,7 +13,7 @@ import SpotifyProvider from "next-auth/providers/spotify";
 import { env } from "~/env.mjs";
 import { db } from "~/server/db";
 
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Sharelist } from "@prisma/client";
 import { createSharelist } from "~/app/lib/sharelistUtils";
 
 /**
@@ -26,10 +26,11 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
+      sharelist: Sharelist;
       // ...other properties
       // role: UserRole;
     } & DefaultSession["user"];  
-    accessToken: string | undefined
+    accessToken: string | undefined,
   }
 }
 declare module "next-auth/jwt" {
@@ -96,6 +97,7 @@ export const authOptions: NextAuthOptions = {
     async jwt({ account, token }) {
       //Only true for the initial login otherwise account is undefined
       if (account) {
+        console.log(account)
         token.accessToken = account.access_token
         token.refreshToken = account.refresh_token
         token.expires_at = account.expires_at
