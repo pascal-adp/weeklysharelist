@@ -78,5 +78,5 @@ model SharelistSong {
     name String
     album String
     cover String
-    artists String[]
+    artists String
 }
