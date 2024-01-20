@@ -102,19 +102,6 @@ export const authOptions: NextAuthOptions = {
         token.refreshToken = account.refresh_token
         token.expires_at = account.expires_at
 
-        const dbUser = await db.account.findFirst({
-          where: {
-            providerAccountId: account.providerAccountId
-          }
-        })
-
-        if (dbUser) {
-          token.userId = dbUser.id
-          await createSharelist(dbUser.id)
-        }
-
-        // await createSharelist(user.id)
-
         return token
       }
       //Token has not expired yet
