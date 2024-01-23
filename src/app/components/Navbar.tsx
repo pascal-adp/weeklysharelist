@@ -1,5 +1,6 @@
+"use client"
 import { useSession } from "next-auth/react";
-import { Avatar, AvatarImage, AvatarFallback } from "~/app/components/ui/avatar";
+import AvatarDropdown from "~/app/components/AvatarDropdown";
 
 const Navbar = () => {
   const { data } = useSession()
@@ -9,10 +10,7 @@ const Navbar = () => {
       <p className="ml-5 text-3xl font-bold tracking-[-0.1em] text-ws-claret">
         weeklysharelist!
       </p>
-      <Avatar className="mr-5 h-10 w-10 bg-gray-300">
-        <AvatarImage src=""/>
-        <AvatarFallback>PA</AvatarFallback>
-      </Avatar>
+      <AvatarDropdown userImage={data?.user.image} userName={data?.user.name} />
     </nav>
   );
 };
