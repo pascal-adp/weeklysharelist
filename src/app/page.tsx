@@ -1,12 +1,14 @@
 "use client"
 import { Button } from "~/app/components/ui/button";
 import { signIn, useSession } from "next-auth/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import CreateSharelist from "~/app/components/CreateSharelist";
-import SongPreview from "./components/SongPreview";
+import { api } from "~/trpc/react";
 
 export default function Home() {
   const session = useSession()
+  const [userId, setUserId] = useState("")
+  const { mutate, error } = api.sharelist.create.useMutation()
 
   useEffect(() => {
     console.log(session)
@@ -38,6 +40,13 @@ export default function Home() {
         className="text-md mt-4 w-32 bg-ws-darkcyan text-white"
       >
         Sign Up
+      </Button>
+      <Button onClick={() => {
+        console.log(`Logging the user id: ${userId}`)
+        const result = mutate()
+        console.log(result)
+      }}>
+        CREATE SHARELIST
       </Button>
       <CreateSharelist />
     </main>

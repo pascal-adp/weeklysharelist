@@ -13,8 +13,7 @@ import SpotifyProvider from "next-auth/providers/spotify";
 import { env } from "~/env.mjs";
 import { db } from "~/server/db";
 
-import { PrismaClient, Sharelist } from "@prisma/client";
-import { createSharelist } from "~/app/lib/sharelistUtils";
+import { Sharelist } from "@prisma/client";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -25,7 +24,7 @@ import { createSharelist } from "~/app/lib/sharelistUtils";
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
-      id: string;
+      id: string | undefined;
       sharelist: Sharelist;
       // ...other properties
       // role: UserRole;
@@ -35,7 +34,7 @@ declare module "next-auth" {
 }
 declare module "next-auth/jwt" {
   interface JWT extends Record<string, unknown>, DefaultJWT {
-    userId: string
+    userId: string | undefined
     accessToken: string | undefined
     refreshToken: string | undefined
     expires_at: number | undefined
@@ -97,12 +96,19 @@ export const authOptions: NextAuthOptions = {
     async jwt({ account, token }) {
       //Only true for the initial login otherwise account is undefined
       if (account) {
-        console.log(account)
-        token.accessToken = account.access_token
-        token.refreshToken = account.refresh_token
-        token.expires_at = account.expires_at
+        const dbAccount = await db.account.findFirst({
+          where: {
+            providerAccountId: account?.providerAccountId
+          }
+        })
 
-        return token
+        return {
+          ...token,
+          userId: dbAccount?.userId,
+          accessToken: account.access_token,
+          refreshToken: account.refresh_token,
+          expires_at: account.expires_at,
+        }
       }
       //Token has not expired yet
       else if (token.expires_at && Date.now() < token.expires_at) {
@@ -111,10 +117,22 @@ export const authOptions: NextAuthOptions = {
       //Token has expired
       else {
         const newAccessToken = await refreshAccessToken(token)
-        return newAccessToken as JWT & TokenSet
+        
+        if (newAccessToken) {
+          return {
+            ...token,
+            accessToken: newAccessToken.accessToken,
+            refreshToken: newAccessToken.refreshToken,
+            expires_at: newAccessToken.expires_at,
+          } as JWT & TokenSet
+        }
+        else {
+          console.error("Something went wrong while refreshing the access token")
+          return token
+        }
       }
     },
-    session({ session, token }) {
+    async session({ session, token }) {
       if (token) {
         session.accessToken = token.accessToken
         session.user.id = token.userId
