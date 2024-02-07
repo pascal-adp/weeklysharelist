@@ -1,27 +1,31 @@
 import { z } from "zod";
-
 import {
     createTRPCRouter,
     protectedProcedure,
-    publicProcedure,
 } from "~/server/api/trpc";
 import { db } from "~/server/db";
 import { getServerAuthSession } from "~/server/auth";
+
+const getSession = async () => {
+    const session = await getServerAuthSession();
+
+    if (!session) {
+        throw new Error("No session found");
+    }
+    else {
+        return session;
+    }
+}
 
 export const sharelistRouter = createTRPCRouter({
     create: protectedProcedure
         .mutation(async () => {
             //Check if user has sharelist
-            const session = await getServerAuthSession();
-            if(!session) {
-                throw new Error("No session found");
-            }
-
+            const session = await getSession();
             const userId = session.user.id!;
-            console.log(session)
 
             const sharelist = await db.sharelist.findFirst({
-                where: { 
+                where: {
                     ownedById: session?.user.id
                 }
             })
@@ -36,5 +40,13 @@ export const sharelistRouter = createTRPCRouter({
             else {
                 throw new Error("User already has sharelist");
             }
+        }),
+    addSongToSharelist: protectedProcedure
+        .input(z.object({}))
+        .mutation(async () => {
+            const session = await getSession();
+            const userId = session.user.id;
+
+            
         })
 });

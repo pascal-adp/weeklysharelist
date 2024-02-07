@@ -4,8 +4,7 @@ import {
   getServerSession,
   type DefaultSession,
   type NextAuthOptions,
-  type TokenSet,
-  type Account
+  type TokenSet
 } from "next-auth";
 import { type JWT, type DefaultJWT } from "next-auth/jwt";
 import SpotifyProvider from "next-auth/providers/spotify";

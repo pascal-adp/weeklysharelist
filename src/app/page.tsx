@@ -8,7 +8,7 @@ import { api } from "~/trpc/react";
 export default function Home() {
   const session = useSession()
   const [userId, setUserId] = useState("")
-  const { mutate, error } = api.sharelist.create.useMutation()
+  const createSharelist = api.sharelist.create.useMutation()
 
   useEffect(() => {
     console.log(session)
@@ -43,7 +43,7 @@ export default function Home() {
       </Button>
       <Button onClick={() => {
         console.log(`Logging the user id: ${userId}`)
-        const result = mutate()
+        const result = createSharelist.mutate()
         console.log(result)
       }}>
         CREATE SHARELIST
