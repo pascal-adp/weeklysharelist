@@ -3,16 +3,12 @@ import { Button } from "~/app/components/ui/button";
 import { signIn, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import CreateSharelist from "~/app/components/CreateSharelist";
-import { api } from "~/trpc/react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const session = useSession()
-  const [userId, setUserId] = useState("")
-  const createSharelist = api.sharelist.create.useMutation()
-
-  useEffect(() => {
-    console.log(session)
-  }, [session])
+  const [userId, setUserId] = useState("");
+  const router = useRouter();
 
   return (
     <main className="mt-64 flex flex-grow flex-col items-center">
@@ -28,25 +24,11 @@ export default function Home() {
       </div>
       <Button
         onClick={() => {
-          const signInUser = async () => {
-            try {
-              await signIn("spotify");
-            } catch (error) {
-              console.error(error);
-            }
-          };
-          signInUser().catch(console.error);
+          router.push('http://localhost:8000/api/v1/auth/spotify/login')
         }}
         className="text-md mt-4 w-32 bg-ws-darkcyan text-white"
       >
         Sign Up
-      </Button>
-      <Button onClick={() => {
-        console.log(`Logging the user id: ${userId}`)
-        const result = createSharelist.mutate()
-        console.log(result)
-      }}>
-        CREATE SHARELIST
       </Button>
       <CreateSharelist />
     </main>

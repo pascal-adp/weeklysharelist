@@ -1,15 +1,14 @@
 import "~/app/styles/globals.css";
 
 import { Inter } from "next/font/google";
-import { headers } from "next/headers";
 
-import { TRPCReactProvider } from "~/trpc/react";
 import Navbar from "~/app/components/Navbar";
-import AuthProvider from "~/app/context/AuthProvider";
+import { cn } from "~/app/lib/utils";
+import { QueryProvider } from "./context/QueryProvider";
 
 const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-sans",
+  // variable: "--font-sans",
 });
 
 export const metadata = {
@@ -25,13 +24,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`font-sans ${inter.variable} flex h-screen flex-col`}>
-        <TRPCReactProvider headers={headers()}>
-          <AuthProvider>
+      <body className={`${cn('flex h-screen flex-col', inter.className)}`}>
+        <QueryProvider>
             <Navbar />
             {children}
-          </AuthProvider>
-        </TRPCReactProvider>
+        </QueryProvider>
       </body>
     </html>
   );

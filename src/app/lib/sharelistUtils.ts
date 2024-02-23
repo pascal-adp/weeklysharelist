@@ -1,8 +1,5 @@
 "use client"
 import axios from "axios";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient()
 
 export const getRecommendations = async (accessToken: string) => {
   const URL =
@@ -36,21 +33,21 @@ interface addSongToSharelistProps {
   sharelist: string | undefined;
 }
 
-export const addSongToSharelist = async ({id, name, album, artists, image, sharelist}: addSongToSharelistProps) => {
-  await prisma.sharelistSong.create({
-    data: {
-      id: id,
-      album: album,
-      artists: artists,
-      cover: image ? image : "",
-      name: name,
-      belongsToSharelist: {
-        connect: {
-          id: sharelist
-        }
-      }
-    },
-  });
+export const addSongToSharelist = async ({id, name, album, artists, image}: addSongToSharelistProps) => {
+  // await prisma.sharelistSong.create({
+  //   data: {
+  //     id: id,
+  //     album: album,
+  //     artists: artists,
+  //     cover: image ? image : "",
+  //     name: name,
+  //     belongsToSharelist: {
+  //       connect: {
+  //         id: sharelist
+  //       }
+  //     }
+  //   },
+  // });
 };
 
 // export const getUserSharelist = async () => {
@@ -58,13 +55,13 @@ export const addSongToSharelist = async ({id, name, album, artists, image, share
 // }
 
 export const createSharelist = async (userId: string) => {
-  await prisma.user.create({
-    data: {
-      sharelist: {
-        create: {
-          id: userId,
-        }
-      }
-    }
-  })
+  // await prisma.user.create({
+  //   data: {
+  //     sharelist: {
+  //       create: {
+  //         id: userId,
+  //       }
+  //     }
+  //   }
+  // })
 }

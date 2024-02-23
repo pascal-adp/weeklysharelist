@@ -10,30 +10,24 @@ import { Search } from "lucide-react";
 import { Input } from "~/app/components/ui/input";
 import { Separator } from "~/app/components/ui/separator";
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
 import SongPreview from "./SongPreview";
 import { ScrollArea } from "./ui/scroll-area";
 
-import { getConcattedArtists, getRecommendations, addSongToSharelist } from "~/app/lib/sharelistUtils";
+import { getConcattedArtists } from "~/app/lib/sharelistUtils";
+import axios from "axios";
 
 const CreateSharelist = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [songs, setSongs] = useState<SpotifyApi.TrackObjectFull[]>([]);
-  const { data } = useSession();
 
   useEffect(() => {
     const fetchData = async () => {
-      if (data?.accessToken && songs.length === 0) {
-        const response = await getRecommendations(data.accessToken);
-        console.log(response)
-        if (response) {
-          setSongs(response.data.items);
-        }
-      }
-    };
-    
-    void fetchData();
-  }, [dialogOpen, data, songs]);
+      const data = await axios.get("http://localhost:8000/api/v1/spotify/top/tracks", { withCredentials: true });
+      console.log(data)
+      setSongs(data.data.items);
+    }
+    fetchData();
+  }, []);
 
   return (
     <Dialog open={dialogOpen} onOpenChange={() => setDialogOpen(!dialogOpen)}>
@@ -63,13 +57,13 @@ const CreateSharelist = () => {
               title={song.name}
               artists={artistsNames}
               image={image}
-              onAddToSharelist={() => addSongToSharelist({id: song.id, 
-                name: song.name,
-                album: song.album.name,
-                artists: artistsNames,
-                image: image,
-                sharelist: data?.user?.sharelist?.id
-              })}
+              // onAddToSharelist={() => addSongToSharelist({id: song.id, 
+              //   name: song.name,
+              //   album: song.album.name,
+              //   artists: artistsNames,
+              //   image: image,
+              //   sharelist: data?.user?.sharelist?.id
+              // })}
             />
           );
         })}

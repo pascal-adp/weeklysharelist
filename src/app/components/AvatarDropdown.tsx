@@ -39,7 +39,7 @@ const AvatarDropdown: React.FC<AvatarDropdownProps> = ({ userImage, userName }) 
             <AvatarFallback>{ abbreviateUserName(userName) }</AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
+        <DropdownMenuContent className="bg-white">
           <DropdownMenuLabel>{userName}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem>Profile</DropdownMenuItem>
