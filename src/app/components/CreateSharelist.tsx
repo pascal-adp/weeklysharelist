@@ -12,13 +12,17 @@ import { Separator } from "~/app/components/ui/separator";
 import { useEffect, useState } from "react";
 import SongPreview from "./SongPreview";
 import { ScrollArea } from "./ui/scroll-area";
-
 import { getConcattedArtists } from "~/app/lib/sharelistUtils";
+import { useAddSongToSharelist } from "~/app/services/mutations";
+
 import axios from "axios";
 
 const CreateSharelist = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [songs, setSongs] = useState<SpotifyApi.TrackObjectFull[]>([]);
+
+  const addSongToSharelist = useAddSongToSharelist();
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,7 +52,7 @@ const CreateSharelist = () => {
         <Separator className="my-2 bg-gray-200" />
         <p className="text-md">Recommendations:</p>
         <ScrollArea className="w-[462px] h-48 rounded-md border">
-        {songs.map((song) => {
+        {songs && songs.map((song) => {
           const artistsNames = getConcattedArtists(song.artists);
           const image = song.album.images[1]?.url
           return (
@@ -57,13 +61,15 @@ const CreateSharelist = () => {
               title={song.name}
               artists={artistsNames}
               image={image}
-              // onAddToSharelist={() => addSongToSharelist({id: song.id, 
-              //   name: song.name,
-              //   album: song.album.name,
-              //   artists: artistsNames,
-              //   image: image,
-              //   sharelist: data?.user?.sharelist?.id
-              // })}
+              onAddToSharelist={() => {
+                addSongToSharelist.mutate({
+                  name: song.name,
+                  album: song.album.name,
+                  artists: artistsNames,
+                  cover: image!,
+                  spotifyTrackId: song.id
+                })
+              }}
             />
           );
         })}

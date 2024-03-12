@@ -12,12 +12,12 @@ const SongPreview = ({
   title,
   artists,
   image,
-  // onAddToSharelist,
+  onAddToSharelist
 }: {
   title: string;
   artists: string;
   image: string | undefined;
-  // onAddToSharelist: () => void;
+  onAddToSharelist: () => void;
 }) => {
   return (
     <Card className="flex flex-row items-center justify-between">
@@ -39,7 +39,7 @@ const SongPreview = ({
         </CardHeader>
       </div>
       <Button variant={"outline"} size="icon" className="mr-4 border-gray-400" onClick={() => {
-        // onAddToSharelist()
+        onAddToSharelist()
       }}>
         <ListPlus size={32} className="text-gray-700" />
       </Button>
