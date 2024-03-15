@@ -1,14 +1,15 @@
 "use client"
 import { Button } from "~/app/components/ui/button";
-import { signIn, useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import CreateSharelist from "~/app/components/CreateSharelist";
-import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useSessionStatus } from "~/app/services/queries";
 
 export default function Home() {
   const [userId, setUserId] = useState("");
   const router = useRouter();
+
+  const sessionStatus = useSessionStatus();
 
   return (
     <main className="mt-64 flex flex-grow flex-col items-center">
@@ -30,7 +31,7 @@ export default function Home() {
       >
         Sign Up
       </Button>
-      <CreateSharelist />
+      { sessionStatus.isSuccess && sessionStatus.data.status === "authenticated" && <CreateSharelist />}
     </main>
   );
 }

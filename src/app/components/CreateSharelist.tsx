@@ -9,29 +9,21 @@ import {
 import { Search } from "lucide-react";
 import { Input } from "~/app/components/ui/input";
 import { Separator } from "~/app/components/ui/separator";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import SongPreview from "./SongPreview";
 import { ScrollArea } from "./ui/scroll-area";
 import { getConcattedArtists } from "~/app/lib/sharelistUtils";
-import { useAddSongToSharelist } from "~/app/services/mutations";
+import { useAddSongToSharelist, useDeleteSongFromSharelist } from "~/app/services/mutations";
+import { useSharelistSongs, useSpotifyTopTracks } from "~/app/services/queries"; 
 
-import axios from "axios";
 
 const CreateSharelist = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [songs, setSongs] = useState<SpotifyApi.TrackObjectFull[]>([]);
 
   const addSongToSharelist = useAddSongToSharelist();
-
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await axios.get("http://localhost:8000/api/v1/spotify/top/tracks", { withCredentials: true });
-      console.log(data)
-      setSongs(data.data.items);
-    }
-    fetchData();
-  }, []);
+  const spotifyTopTracks = useSpotifyTopTracks();
+  const sharelistSongs = useSharelistSongs();
+  const deleteSongFromSharelist = useDeleteSongFromSharelist();
 
   return (
     <Dialog open={dialogOpen} onOpenChange={() => setDialogOpen(!dialogOpen)}>
@@ -48,11 +40,24 @@ const CreateSharelist = () => {
         <Input placeholder="Search" type="search" icon={<Search size={18} />} />
         <Separator className="my-2 bg-gray-200" />
         <p className="text-md">Current Sharelist:</p>
-
+        {sharelistSongs.isSuccess && sharelistSongs.data.map((song) => {
+          return (
+            <SongPreview 
+              key={song.spotifyTrackId}
+              title={song.name}
+              artists={song.artists}
+              image={song.cover}
+              onRemoveFromSharelist={() => {
+                deleteSongFromSharelist.mutate(song.spotifyTrackId)
+              }}
+          />
+          )
+        })
+        }
         <Separator className="my-2 bg-gray-200" />
         <p className="text-md">Recommendations:</p>
         <ScrollArea className="w-[462px] h-48 rounded-md border">
-        {songs && songs.map((song) => {
+        {spotifyTopTracks.isSuccess && spotifyTopTracks.data.map((song) => {
           const artistsNames = getConcattedArtists(song.artists);
           const image = song.album.images[1]?.url
           return (

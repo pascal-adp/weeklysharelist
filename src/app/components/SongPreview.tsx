@@ -1,4 +1,4 @@
-import { ListPlus } from "lucide-react";
+import { ListPlus, ListX } from "lucide-react";
 import Image from "next/image";
 import {
   Card,
@@ -12,12 +12,14 @@ const SongPreview = ({
   title,
   artists,
   image,
-  onAddToSharelist
+  onAddToSharelist,
+  onRemoveFromSharelist,
 }: {
   title: string;
   artists: string;
   image: string | undefined;
-  onAddToSharelist: () => void;
+  onAddToSharelist?: () => void;
+  onRemoveFromSharelist?: () => void;
 }) => {
   return (
     <Card className="flex flex-row items-center justify-between">
@@ -38,11 +40,18 @@ const SongPreview = ({
           <CardDescription>{artists}</CardDescription>
         </CardHeader>
       </div>
-      <Button variant={"outline"} size="icon" className="mr-4 border-gray-400" onClick={() => {
+      {onAddToSharelist && <Button variant={"outline"} size="icon" className="mr-4 border-gray-400" onClick={() => {
         onAddToSharelist()
       }}>
         <ListPlus size={32} className="text-gray-700" />
       </Button>
+      }
+      {onRemoveFromSharelist && <Button variant={"outline"} size="icon" className="mr-4 border-gray-400" onClick={() => {
+        onRemoveFromSharelist()
+      }}>
+        <ListX size={32} className="text-gray-700" />
+      </Button>
+      }
     </Card>
   );
 };
