@@ -1,5 +1,6 @@
+import { useQueryClient } from "@tanstack/react-query";
 import axios, { type AxiosResponse } from "axios";
-import { type SharelistSong } from "../types/sharelist";
+import { type SharelistSong } from "~/app/types/sharelist";
 
 const api = axios.create({
     baseURL: "http://localhost:8000/api/v1",
@@ -15,9 +16,18 @@ export const getUserInfo = async () => {
 }
 
 export const addSongToSharelist = async (data: SharelistSong) => {
-    return await api.post<any, AxiosResponse<any, any>, SharelistSong>("/sharelist/addSong", {
+    const queryClient = useQueryClient()
+
+    const songs = queryClient.getQueryData<SharelistSong[]>(["sharelistSongs"])
+
+    if (songs && songs.length > 3) {
+        return
+    }
+
+    const response = await api.post<any, AxiosResponse<any, any>, SharelistSong>("/sharelist/addSong", {
         ...data
     });
+    return data;
 }
 
 export const getSpotifyTopTracks = async (): Promise<SpotifyApi.TrackObjectFull[]> => {
@@ -33,6 +43,8 @@ export const getSharelistSongs = async () => {
 
 export const deleteSongFromSharelist = async (spotifyTrackId: string) => {
     const response = await api.delete(`/sharelist/deleteSong/${spotifyTrackId}`);
+    console.log(response.status)
+    return spotifyTrackId;
 }
 
 interface Session {
