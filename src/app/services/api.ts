@@ -1,4 +1,3 @@
-import { useQueryClient } from "@tanstack/react-query";
 import axios, { type AxiosResponse } from "axios";
 import { type SharelistSong } from "~/app/types/sharelist";
 
@@ -16,14 +15,6 @@ export const getUserInfo = async () => {
 }
 
 export const addSongToSharelist = async (data: SharelistSong) => {
-    const queryClient = useQueryClient()
-
-    const songs = queryClient.getQueryData<SharelistSong[]>(["sharelistSongs"])
-
-    if (songs && songs.length > 3) {
-        return
-    }
-
     const response = await api.post<any, AxiosResponse<any, any>, SharelistSong>("/sharelist/addSong", {
         ...data
     });
@@ -52,5 +43,11 @@ interface Session {
 }
 export const getSessionStatus = async () => {
     const response = await api.get<Session>("/session/status");
+    return response.data;
+}
+
+export const getSpotiyTrackSearch = async (query: string): Promise<SpotifyApi.TrackObjectFull[]> => {
+    const response = await api.get(`/spotify/search?q=${query}`);
+    console.log(response.data)
     return response.data;
 }

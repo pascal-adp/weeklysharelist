@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import exp from "constants"
-import { getSessionStatus, getSharelistSongs, getSpotifyTopTracks, getUserInfo } from "~/app/services/api"
+import { getSessionStatus, getSharelistSongs, getSpotifyTopTracks, getSpotiyTrackSearch, getUserInfo } from "~/app/services/api"
 
 export const useUserInfo = () => {
     return useQuery({
@@ -30,6 +29,14 @@ export const useSessionStatus = () => {
     return useQuery({
         queryKey: ["sessionStatus"],
         queryFn: getSessionStatus,
+        refetchOnWindowFocus: false
+    })
+}
+
+export const useSpotifyTrackSearch = (query: string) => {
+    return useQuery({
+        queryKey: ["spotifyTrackSearch", query],
+        queryFn: () => getSpotiyTrackSearch(query),
         refetchOnWindowFocus: false
     })
 }

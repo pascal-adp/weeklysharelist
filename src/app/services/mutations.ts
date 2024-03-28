@@ -7,7 +7,15 @@ export const useAddSongToSharelist = () => {
 
   return useMutation({
     mutationKey: ["addSongToSharelist"],
-    mutationFn: (data: SharelistSong) => addSongToSharelist(data),
+    mutationFn: (data: SharelistSong) => {
+      const songs = queryClient.getQueryData<SharelistSong[]>(['sharelistSongs'])
+
+      if (songs && songs.length > 3) {
+        throw new Error("You can only have 4 songs in your sharelist")
+      }
+
+      return addSongToSharelist(data)
+    },
     onMutate: async (data) => {
       // Cancel any outgoing refetches
       // (so they don't overwrite our optimistic update)
