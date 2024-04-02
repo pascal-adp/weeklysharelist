@@ -7,7 +7,7 @@ const Navbar = () => {
 
   return (  
     <nav className="flex h-16 w-screen items-center border-b-2 justify-between">
-      <p className="ml-5 text-3xl font-bold tracking-[-0.1em] text-ws-claret">
+      <p className="ml-5 text-3xl font-bold tracking-[-0.1em] text-ws-mindaro cursor-default">
         weeklysharelist!
       </p>
       { isLoading ? <p>Loading....</p>

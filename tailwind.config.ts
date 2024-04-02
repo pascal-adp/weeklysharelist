@@ -10,7 +10,8 @@ export default {
       },
       colors: {
         "ws-claret": "#750D37",
-        "ws-darkcyan": "#3E8989"
+        "ws-darkcyan": "#3E8989",
+        "ws-mindaro": "#90be6d"
       }
     },
   },

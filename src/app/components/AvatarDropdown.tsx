@@ -8,6 +8,7 @@ import {
   } from "~/app/components/ui/dropdown-menu"
   import { Avatar, AvatarImage, AvatarFallback } from "~/app/components/ui/avatar";
 import React from "react";
+import Friends from "./Friends";
 
 const abbreviateUserName = (userName: UserDataAttirbutes): string => {
     if (!userName) {
@@ -45,7 +46,9 @@ const AvatarDropdown: React.FC<AvatarDropdownProps> = ({ userImage, userName }) 
           <DropdownMenuItem>Profile</DropdownMenuItem>
           <DropdownMenuItem>Billing</DropdownMenuItem>
           <DropdownMenuItem>Team</DropdownMenuItem>
-          <DropdownMenuItem>Subscription</DropdownMenuItem>
+          <DropdownMenuItem>
+            <Friends />
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     )
