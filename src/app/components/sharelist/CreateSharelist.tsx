@@ -4,21 +4,27 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "~/app/components/ui/dialog";
-import { Search } from "lucide-react";
 import { Input } from "~/app/components/ui/input";
 import { Separator } from "~/app/components/ui/separator";
-import { useState } from "react";
-import SongPreview from "./SongPreview";
-import { ScrollArea } from "./ui/scroll-area";
+import { ScrollArea } from "~/app/components/ui/scroll-area";
+
+import SongPreview from "~/app/components/SongPreview";
+
+import { Search } from "lucide-react";
+import React, { useState } from "react";
+
 import { getConcattedArtists } from "~/app/lib/sharelistUtils";
 import { useAddSongToSharelist, useDeleteSongFromSharelist } from "~/app/services/mutations";
 import { useSharelistSongs, useSpotifyTopTracks, useSpotifyTrackSearch } from "~/app/services/queries";
 
+interface CreateSharelistProps {
+  dialogOpen: boolean;
+  updateDialogOpenState: (dialogOpen: boolean) => void;
 
-const CreateSharelist = () => {
-  const [dialogOpen, setDialogOpen] = useState(false);
+}
+
+const CreateSharelist: React.FC<CreateSharelistProps> = ({ dialogOpen, updateDialogOpenState }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const addSongToSharelist = useAddSongToSharelist();
@@ -33,8 +39,7 @@ const CreateSharelist = () => {
   };
 
   return (
-    <Dialog open={dialogOpen} onOpenChange={() => setDialogOpen(!dialogOpen)}>
-      <DialogTrigger>Open</DialogTrigger>
+    <Dialog open={dialogOpen} onOpenChange={() => updateDialogOpenState(!dialogOpen)}>
       <DialogContent className="w-2/3">
         <DialogHeader>
           <DialogTitle className="text-3xl font-bold tracking-[-0.1em]">
@@ -68,25 +73,27 @@ const CreateSharelist = () => {
               />
             )
           })}
-        </>) : (<>
+        </>) : (<div className="flex flex-col h-[700px]">
           <p className="text-md">Current Sharelist:</p>
-          {sharelistSongs.isSuccess && sharelistSongs.data.map((song) => {
-            return (
-              <SongPreview
-                key={song.spotifyTrackId}
-                title={song.name}
-                artists={song.artists}
-                image={song.cover}
-                onRemoveFromSharelist={() => {
-                  deleteSongFromSharelist.mutate(song.spotifyTrackId)
-                }}
-              />
-            )
-          })
-          }
+          <div>
+            {sharelistSongs.isSuccess && sharelistSongs.data.map((song) => {
+              return (
+                <SongPreview
+                  key={song.spotifyTrackId}
+                  title={song.name}
+                  artists={song.artists}
+                  image={song.cover}
+                  onRemoveFromSharelist={() => {
+                    deleteSongFromSharelist.mutate(song.spotifyTrackId)
+                  }}
+                />
+              )
+            })
+            }
+          </div>
           <Separator className="my-2 bg-gray-200" />
           <p className="text-md">Recommendations:</p>
-          <ScrollArea className="h-48 rounded-md border">
+          <ScrollArea className="h-48 rounded-md border flex-1">
             {spotifyTopTracks.isSuccess && spotifyTopTracks.data.map((song) => {
               const artistsNames = getConcattedArtists(song.artists);
               const image = song.album.images[1]?.url
@@ -109,7 +116,7 @@ const CreateSharelist = () => {
               );
             })}
           </ScrollArea>
-        </>)}
+        </div>)}
       </DialogContent>
     </Dialog>
   );

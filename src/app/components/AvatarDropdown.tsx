@@ -8,7 +8,6 @@ import {
   } from "~/app/components/ui/dropdown-menu"
   import { Avatar, AvatarImage, AvatarFallback } from "~/app/components/ui/avatar";
 import React from "react";
-import Friends from "./Friends";
 
 const abbreviateUserName = (userName: UserDataAttirbutes): string => {
     if (!userName) {
@@ -35,7 +34,7 @@ const AvatarDropdown: React.FC<AvatarDropdownProps> = ({ userImage, userName }) 
     return(
         <DropdownMenu>
         <DropdownMenuTrigger asChild >
-          <Avatar className="mr-5 h-10 w-10 bg-gray-300 cursor-pointer">
+          <Avatar className="mr-5 h-10 w-10 border-2 border-ws-mindaro cursor-pointer">
             <AvatarImage src={userImage ? userImage : ""} />
             <AvatarFallback>{ abbreviateUserName(userName) }</AvatarFallback>
           </Avatar>
@@ -46,9 +45,6 @@ const AvatarDropdown: React.FC<AvatarDropdownProps> = ({ userImage, userName }) 
           <DropdownMenuItem>Profile</DropdownMenuItem>
           <DropdownMenuItem>Billing</DropdownMenuItem>
           <DropdownMenuItem>Team</DropdownMenuItem>
-          <DropdownMenuItem>
-            <Friends />
-          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     )

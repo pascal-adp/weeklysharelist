@@ -1,13 +1,9 @@
 "use client"
 import { Button } from "~/app/components/ui/button";
-import { useState } from "react";
-import CreateSharelist from "~/app/components/CreateSharelist";
 import { useRouter } from "next/navigation";
 import { useSessionStatus } from "~/app/services/queries";
-import Friends from "~/app/components/Friends";
 
 export default function Home() {
-  const [userId, setUserId] = useState("");
   const router = useRouter();
 
   const sessionStatus = useSessionStatus();
@@ -32,8 +28,6 @@ export default function Home() {
       >
         Sign Up
       </Button>
-      { sessionStatus.isSuccess && sessionStatus.data.status === "authenticated" && <CreateSharelist />}
-      { sessionStatus.isSuccess && sessionStatus.data.status === "authenticated" && <Friends />}
     </main>
   );
 }

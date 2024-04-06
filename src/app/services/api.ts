@@ -28,13 +28,11 @@ export const getSpotifyTopTracks = async (): Promise<SpotifyApi.TrackObjectFull[
 
 export const getSharelistSongs = async () => {
     const response = await api.get<SharelistSong[]>("/sharelist/getSongs");
-    console.log(response.data)
     return response.data;
 }
 
 export const deleteSongFromSharelist = async (spotifyTrackId: string) => {
     const response = await api.delete(`/sharelist/deleteSong/${spotifyTrackId}`);
-    console.log(response.status)
     return spotifyTrackId;
 }
 
@@ -48,6 +46,17 @@ export const getSessionStatus = async () => {
 
 export const getSpotiyTrackSearch = async (query: string): Promise<SpotifyApi.TrackObjectFull[]> => {
     const response = await api.get(`/spotify/search?q=${query}`);
-    console.log(response.data)
+    return response.data;
+}
+
+export const getAllFriends = async () => {
+    const response = await api.get("/friends/getAll");
+    console.log(response.data);
+    return response.data;
+}
+
+export const shareFriend = async () => {
+    const response = await api.get<{ uuid: string }>("/friends/share");
+    console.log(response.data);
     return response.data;
 }

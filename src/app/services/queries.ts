@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { getSessionStatus, getSharelistSongs, getSpotifyTopTracks, getSpotiyTrackSearch, getUserInfo } from "~/app/services/api"
+import { getAllFriends, getSessionStatus, getSharelistSongs, getSpotifyTopTracks, getSpotiyTrackSearch, getUserInfo, shareFriend } from "~/app/services/api"
 
 export const useUserInfo = () => {
     return useQuery({
@@ -40,3 +40,20 @@ export const useSpotifyTrackSearch = (query: string) => {
         refetchOnWindowFocus: false
     })
 }
+
+export const useGetAllFriends = () => {
+    return useQuery({
+        queryKey: ["getAllFriends"],
+        queryFn: () => getAllFriends(),
+        refetchOnWindowFocus: false
+    })
+};
+
+export const useShareFriend = () => {
+    return useQuery({
+        queryKey: ["shareFriend"],
+        queryFn: () => shareFriend(),
+        refetchOnWindowFocus: false,
+        enabled: false
+    })
+};
