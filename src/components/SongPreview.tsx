@@ -5,9 +5,9 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "~/app/components/ui/card";
-import { Button } from "~/app/components/ui/button";
-import { useToast } from "~/app/components/ui/use-toast";
+} from "~/components/ui/card";
+import { Button } from "~/components/ui/button";
+import { useToast } from "~/components/ui/use-toast";
 
 const SongPreview = ({
   title,

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { getAllFriends, getSessionStatus, getSharelistSongs, getSpotifyTopTracks, getSpotiyTrackSearch, getUserInfo, shareFriend } from "~/app/services/api"
+import { getAllFriends, getSessionStatus, getSharelistSongs, getSpotifyTopTracks, getSpotiyTrackSearch, getUserInfo, shareFriend } from "~/services/api"
 
 export const useUserInfo = () => {
     return useQuery({

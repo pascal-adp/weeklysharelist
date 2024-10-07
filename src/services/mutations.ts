@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { addSongToSharelist, deleteSongFromSharelist } from "~/app/services/api"
-import { type SharelistSong } from "~/app/types/sharelist"
+import { addSongToSharelist, deleteSongFromSharelist } from "~/services/api"
+import { type SharelistSong } from "~/types/sharelist"
 
 export const useAddSongToSharelist = () => {
   const queryClient = useQueryClient()

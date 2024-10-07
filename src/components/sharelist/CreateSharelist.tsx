@@ -4,19 +4,19 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "~/app/components/ui/dialog";
-import { Input } from "~/app/components/ui/input";
-import { Separator } from "~/app/components/ui/separator";
-import { ScrollArea } from "~/app/components/ui/scroll-area";
+} from "~/components/ui/dialog";
+import { Input } from "~/components/ui/input";
+import { Separator } from "~/components/ui/separator";
+import { ScrollArea } from "~/components/ui/scroll-area";
 
-import SongPreview from "~/app/components/SongPreview";
+import SongPreview from "~/components/SongPreview";
 
 import { Search } from "lucide-react";
 import React, { useState } from "react";
 
-import { getConcattedArtists } from "~/app/lib/sharelistUtils";
-import { useAddSongToSharelist, useDeleteSongFromSharelist } from "~/app/services/mutations";
-import { useSharelistSongs, useSpotifyTopTracks, useSpotifyTrackSearch } from "~/app/services/queries";
+import { getConcattedArtists } from "~/lib/sharelistUtils";
+import { useAddSongToSharelist, useDeleteSongFromSharelist } from "~/services/mutations";
+import { useSharelistSongs, useSpotifyTopTracks, useSpotifyTrackSearch } from "~/services/queries";
 
 interface CreateSharelistProps {
   dialogOpen: boolean;

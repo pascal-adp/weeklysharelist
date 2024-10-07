@@ -1,5 +1,5 @@
 import axios, { type AxiosResponse } from "axios";
-import { type SharelistSong } from "~/app/types/sharelist";
+import { type SharelistSong } from "~/types/sharelist";
 
 const api = axios.create({
     baseURL: "http://localhost:8000/api/v1",

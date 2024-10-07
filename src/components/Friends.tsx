@@ -6,10 +6,10 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
-} from "~/app/components/ui/dialog";
-import { Separator } from "~/app/components/ui/separator";
+} from "~/components/ui/dialog";
+import { Separator } from "~/components/ui/separator";
 import { Button } from "./ui/button";
-import { useShareFriend } from "~/app/services/queries";
+import { useShareFriend } from "~/services/queries";
 
 const createFriendUrl = (uuid: string) => {
     const friendUrl = `${process.env.FRONTEND_URL}/friends/add/${uuid}`; // Replace with the actual URL

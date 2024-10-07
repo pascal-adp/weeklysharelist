@@ -2,11 +2,11 @@ import "~/app/styles/globals.css";
 
 import { Inter } from "next/font/google";
 
-import Navbar from "~/app/components/Navbar";
-import { Toaster } from "~/app/components/ui/toaster";
+import Navbar from "~/components/Navbar";
+import { Toaster } from "~/components/ui/toaster";
 
-import { cn } from "~/app/lib/utils";
-import { QueryProvider } from "~/app/context/QueryProvider";
+import { cn } from "~/lib/utils";
+import { QueryProvider } from "~/context/QueryProvider";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const inter = Inter({
@@ -32,7 +32,7 @@ export default function RootLayout({
             <Navbar />
             {children}
             <Toaster />
-            <ReactQueryDevtools initialIsOpen={false}/>
+            {/* <ReactQueryDevtools initialIsOpen={false}/> */}
         </QueryProvider>
       </body>
     </html>
