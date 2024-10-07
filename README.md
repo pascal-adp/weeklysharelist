@@ -1,28 +1,6 @@
-# Create T3 App
+A website based on top of the public Spotify API that lets you share your three favorite songs each week with your friends. The website is still in development and currently only supports updating ones playlist and searching for Songs via the website.
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
-
-## What's next? How do I make an app with this?
-
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
-
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
-
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
-
-## Learn More
-
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
-
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
-
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
-
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+![grafik](https://github.com/user-attachments/assets/84791171-44df-4d3a-b97b-4523907447f7)
+![grafik](https://github.com/user-attachments/assets/70ec9ef7-3231-496d-8c66-3b59744f1684)
+![grafik](https://github.com/user-attachments/assets/d55cd2a9-0044-4c87-8df9-1ac8878ed2be)
+![grafik](https://github.com/user-attachments/assets/a5b2331d-8ca7-414f-bc99-2b43673341c6)
